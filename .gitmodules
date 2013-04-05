@@ -1,0 +1,3 @@
+[submodule "FEZ"]
+	path = FEZ
+	url = git://github.com/perky/FEZ.git
