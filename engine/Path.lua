@@ -34,7 +34,7 @@ function Path:update(dt)
     for _, object in pairs(self.units) do
         o = object.obj  -- TODO better name
         if o:isAlive() then
-            if o.velocity * dt > distance(o.pos, self.finish) then
+            if o.velocity * dt >= distance(o.pos, self.finish) then
                 -- Object reaches its destination. For now, kill it.
                 o.pos = { x = self.finish.x, y = self.finish.y }
                 o:kill()
