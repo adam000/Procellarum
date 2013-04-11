@@ -12,7 +12,7 @@ function length(vec)
     if vec.z then
         return math.sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z)
     else
-        return math.sqrt(vec.x + vec.x + vec.y * vec.y)
+        return math.sqrt(vec.x * vec.x + vec.y * vec.y)
     end
 end
 
