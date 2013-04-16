@@ -1,8 +1,8 @@
 require 'Unit'
 
 Wave = {
-    spawnGap = 4.0,
-    timer = 4.0,
+    spawnGap = 1.0,
+    timer = 1.0,
     unit = Unit,
     numUnits = 10,
     addObjHook = nil,

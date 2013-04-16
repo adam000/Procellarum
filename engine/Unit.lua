@@ -3,7 +3,7 @@ require 'math/Vec2'
 Unit = {
     alive = true,
     image = love.graphics.newImage("assets/Ghost1.png"),
-    velocity = 15,
+    velocity = 75,
     rot = 0,
     pos = Vec2:New({ x = 0, y = 0 }),
 }
@@ -23,13 +23,13 @@ function Unit:kill()
     self.alive = false
 end
 
-function Unit:animate()
+function Unit:animate(dt)
     self.rot = self.rot + dt
 end
 
 function Unit:update(dt)
     if (self:isAlive()) then
-        self:animate()
+        self:animate(dt)
     end
 end
 

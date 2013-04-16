@@ -2,8 +2,7 @@ require 'Util'
 require 'math/Vec2'
 
 Path = {
-    start = Vec2:New(),
-    finish = Vec2:New(),
+    waypoints = {},
     units = {},
 }
 
@@ -14,33 +13,46 @@ function Path:New(o)
     return o
 end
 
-function Path:setStart(pos)
-    self.start = Vec2:New({ x = pos.x, y = pos.y })
-end
-
-function Path:setFinish(pos)
-    self.finish = Vec2:New({ x = pos.x, y = pos.y })
+-- Waypoints should be a linked list (using .next) of Vec2s to represent a line
+function Path:setWaypoints(waypoints)
+    self.waypoints = waypoints
 end
 
 function Path:addUnits(...)
     for _, o in pairs({...}) do
-        local unit = { lastPoint = self.start, obj = o }
-        unit.obj.pos = Vec2:New({ x = self.start.x, y = self.start.y })
-        self.units[#self.units + 1] = unit
+        local obj = {
+            prev = self.waypoints.loc,
+            destination = self.waypoints.next,
+            unit = o,
+        }
+
+        obj.unit.pos = Vec2:New(self.waypoints.loc)
+        self.units[#self.units + 1] = obj
     end
 end
 
 function Path:update(dt)
-    for _, object in pairs(self.units) do
-        o = object.obj  -- TODO better name
+    for _, obj in pairs(self.units) do
+        local o = obj.unit
+        local prev = obj.prev
+        local dest = obj.destination.loc
+
         if o:isAlive() then
-            if o.velocity * dt >= (o.pos - self.finish):length() then
-                -- Object reaches its destination. For now, kill it.
-                o.pos = Vec2:New({ x = self.finish.x, y = self.finish.y })
-                o:kill()
+            if o.velocity * dt >= (o.pos - dest):length() then
+                -- Object reaches its destination.
+                o.pos = Vec2:New(dest)
+
+                -- If it's the end of the line, kill it
+                if (not obj.destination.next) then
+                    o:kill()
+                else
+                    -- Otherwise, switch focus to the next waypoint
+                    obj.prev = obj.destination.loc
+                    obj.destination = obj.destination.next
+                end
             else
                 -- Object has not reached its destination, move along
-                local direction = (self.finish - self.start):normalize()
+                local direction = (dest - prev):normalize()
                 local movement = direction * (o.velocity * dt)
 
                 o.pos = o.pos + movement
@@ -50,5 +62,14 @@ function Path:update(dt)
 end
 
 function Path:draw()
-    love.graphics.line(self.start.x, self.start.y, self.finish.x, self.finish.y)
+    local line = self.waypoints
+
+    love.graphics.setColor(100, 255, 100)
+
+    while (line.next) do
+        love.graphics.line(line.loc.x, line.loc.y, line.next.loc.x, line.next.loc.y)
+        line = line.next
+    end
+
+    love.graphics.setColor(255, 255, 255)
 end

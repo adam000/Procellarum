@@ -7,9 +7,18 @@ local waveNum = 0
 local path
 
 function love.load()
-    path = Path:New()
-    path:setStart( { x = 100, y = 100 } )
-    path:setFinish( { x = 400, y =400 } )
+    path = Path:New({ waypoints = {
+                        loc = Vec2:New({ x = 100, y = 100 }),
+                        next = {
+                            loc = Vec2:New({ x = 400, y = 100 }),
+                            next = {
+                                loc = Vec2:New({ x = 400, y = 400}),
+                                next = {
+                                    loc = Vec2:New({ x = 300, y = 500 }),
+                                }
+                            }
+                        }
+                    }})
 
     wave = Wave:New()
     wave:addObjHook(
