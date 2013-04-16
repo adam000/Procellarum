@@ -1,9 +1,9 @@
 require 'Util'
-require 'Math'
+require 'math/Vec2'
 
 Path = {
-    start = { x = 0, y = 0 },
-    finish = { x = 0, y = 0 },
+    start = Vec2:New(),
+    finish = Vec2:New(),
     units = {},
 }
 
@@ -15,17 +15,17 @@ function Path:New(o)
 end
 
 function Path:setStart(pos)
-    self.start = { x = pos.x, y = pos.y }
+    self.start = Vec2:New({ x = pos.x, y = pos.y })
 end
 
 function Path:setFinish(pos)
-    self.finish = { x = pos.x, y = pos.y }
+    self.finish = Vec2:New({ x = pos.x, y = pos.y })
 end
 
 function Path:addUnits(...)
     for _, o in pairs({...}) do
         local unit = { lastPoint = self.start, obj = o }
-        unit.obj.pos = { x = self.start.x, y = self.start.y }
+        unit.obj.pos = Vec2:New({ x = self.start.x, y = self.start.y })
         self.units[#self.units + 1] = unit
     end
 end
@@ -34,14 +34,16 @@ function Path:update(dt)
     for _, object in pairs(self.units) do
         o = object.obj  -- TODO better name
         if o:isAlive() then
-            if o.velocity * dt >= distance(o.pos, self.finish) then
+            if o.velocity * dt >= (o.pos - self.finish):length() then
                 -- Object reaches its destination. For now, kill it.
-                o.pos = { x = self.finish.x, y = self.finish.y }
+                o.pos = Vec2:New({ x = self.finish.x, y = self.finish.y })
                 o:kill()
             else
                 -- Object has not reached its destination, move along
-                o.pos.x = o.pos.x + normalize(vecTo(self.finish, self.start)).x * o.velocity * dt
-                o.pos.y = o.pos.y + normalize(vecTo(self.finish, self.start)).y * o.velocity * dt
+                local direction = (self.finish - self.start):normalize()
+                local movement = direction * (o.velocity * dt)
+
+                o.pos = o.pos + movement
             end
         end
     end

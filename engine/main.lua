@@ -41,3 +41,15 @@ function love.draw()
         o:draw()
     end
 end
+
+function drawGrid()
+    local width = love.graphics.getWidth()
+    local height = love.graphics.getHeight()
+
+    local w = 0;
+    local h = 0;
+
+    while (w > width) do
+    end
+end
+

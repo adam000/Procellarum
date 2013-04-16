@@ -1,9 +1,11 @@
+require 'math/Vec2'
+
 Unit = {
     alive = true,
     image = love.graphics.newImage("assets/Ghost1.png"),
     velocity = 15,
     rot = 0,
-    pos = { x = 0, y = 0 },
+    pos = Vec2:New({ x = 0, y = 0 }),
 }
 
 function Unit:New(o)
