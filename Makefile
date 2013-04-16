@@ -12,3 +12,6 @@ main:
 	#@cp -r FEZ/src build/engine
 	@cp -r assets build/engine/
 	$(love) build/engine
+
+clean:
+	@rm -rf build/*
