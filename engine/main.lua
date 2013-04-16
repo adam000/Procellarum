@@ -31,6 +31,8 @@ function love.update(dt)
 end
 
 function love.draw()
+    drawGrid()
+
     -- Draw interface
     love.graphics.print("Wave " .. waveNum, 10, 10)
 
@@ -49,7 +51,20 @@ function drawGrid()
     local w = 0;
     local h = 0;
 
-    while (w > width) do
+    local gridSpace = 50
+
+    love.graphics.setColor(180, 180, 200, 200)
+
+    while (w < width) do
+        w = w + gridSpace
+        love.graphics.line(w, 0, w, height)
     end
+
+    while (h < height) do
+        h = h + gridSpace
+        love.graphics.line(0, h, width, h)
+    end
+
+    love.graphics.setColor(255, 255, 255)
 end
 
