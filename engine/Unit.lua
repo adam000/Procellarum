@@ -23,9 +23,13 @@ function Unit:kill()
     self.alive = false
 end
 
+function Unit:animate()
+    self.rot = self.rot + dt
+end
+
 function Unit:update(dt)
     if (self:isAlive()) then
-        self.rot = self.rot + dt
+        self:animate()
     end
 end
 
