@@ -32,6 +32,9 @@ function Path:addUnits(...)
 end
 
 function Path:update(dt)
+    local numFinished = 0
+    local numKilled = 0
+
     for _, obj in pairs(self.units) do
         local o = obj.unit
         local prev = obj.prev
@@ -45,6 +48,7 @@ function Path:update(dt)
                 -- If it's the end of the line, kill it
                 if (not obj.destination.next) then
                     o:kill()
+                    numFinished = numFinished + 1
                 else
                     -- Otherwise, switch focus to the next waypoint
                     obj.prev = obj.destination.loc
@@ -59,6 +63,8 @@ function Path:update(dt)
             end
         end
     end
+
+    return numKilled, numFinished
 end
 
 function Path:draw()

@@ -5,7 +5,7 @@ Wave = {
     timer = 1.0,
     unit = Unit,
     numUnits = 10,
-    addObjHook = nil,
+    hook = nil,
 }
 
 function Wave:New(o)

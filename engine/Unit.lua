@@ -28,12 +28,14 @@ function Unit:animate(dt)
 end
 
 function Unit:update(dt)
-    if (self:isAlive()) then
+    if self:isAlive() then
         self:animate(dt)
     end
 end
 
 function Unit:draw()
-    local image = self.image
-    love.graphics.draw(image, self.pos.x, self.pos.y, self.rot, 1, 1, image:getWidth() / 2, image:getHeight() / 2)
+    if self:isAlive() then
+        local image = self.image
+        love.graphics.draw(image, self.pos.x, self.pos.y, self.rot, 1, 1, image:getWidth() / 2, image:getHeight() / 2)
+    end
 end
