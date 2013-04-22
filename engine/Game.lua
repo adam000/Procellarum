@@ -9,6 +9,8 @@ Game = {
     objects = {},
     waveNum = 0,
     numLives = 5, -- HARDCODE
+    paused = false,
+    dtMod = 1,
 }
 
 local showGameOver = false
@@ -45,6 +47,9 @@ function Game:New(o)
 end
 
 function Game:update(dt)
+    -- DEBUG allow for faster or slower movement
+    dt = dt * self.dtMod
+
     if self.numLives <= 0 then
         gameOverTime = gameOverTime + dt
 
@@ -126,5 +131,27 @@ function Game:drawGrid()
     end
 
     love.graphics.setColor(255, 255, 255)
+end
+
+function Game:isPaused()
+    return self.paused
+end
+
+function Game:togglePause()
+    self.paused = not self.paused
+end
+
+function Game:keyPressed(key)
+    if key == " " or key == "p" then
+        self:togglePause()
+    elseif key == "=" then -- DEBUG speed up
+        self.dtMod = self.dtMod + 1
+    elseif key == "-" then -- DEBUG slow down
+        self.dtMod = self.dtMod - 1
+    elseif key == "q" then
+        love.event.quit()
+    else
+        print("Player pressed unmapped key: " .. key)
+    end
 end
 
