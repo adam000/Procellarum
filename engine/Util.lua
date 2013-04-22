@@ -1,4 +1,4 @@
 function exit(message)
-    print(message);
-    love.event.quit();
+    print(message)
+    love.event.quit()
 end
