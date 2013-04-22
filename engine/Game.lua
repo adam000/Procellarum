@@ -14,7 +14,7 @@ Game = {
 local showGameOver = false
 local gameOverTime = 0
 
-function Game:New()
+function Game:New(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
