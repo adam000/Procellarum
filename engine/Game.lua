@@ -39,7 +39,7 @@ function Game:New(o)
             o.objects[#o.objects + 1] = obj
             o.path:addUnits(obj)
         end
-    );
+    )
 
     return o
 end
@@ -108,8 +108,8 @@ function Game:drawGrid()
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
 
-    local w = 0;
-    local h = 0;
+    local w = 0
+    local h = 0
 
     local gridSpace = 50
 
