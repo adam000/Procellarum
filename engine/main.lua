@@ -20,3 +20,7 @@ end
 function love.keypressed(key)
     game:keyPressed(key)
 end
+
+function love.mousepressed(x, y, button)
+    game:mousePressed(x, y, button)
+end

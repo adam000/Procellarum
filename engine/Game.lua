@@ -3,6 +3,7 @@
 require 'Path'
 require 'Wave'
 require 'Unit'
+require 'Tower'
 
 Game = {
     path = nil,
@@ -13,8 +14,12 @@ Game = {
     dtMod = 1,
 }
 
+-- TODO refactor into object
 local showGameOver = false
 local gameOverTime = 0
+
+-- TODO refactor into object
+local currentBoxArea = nil
 
 function Game:New(o)
     o = o or {}
@@ -109,6 +114,9 @@ function Game:draw()
     end
 end
 
+-- TODO refactor into object
+local gridSpace = 50
+
 function Game:drawGrid()
     local width = love.graphics.getWidth()
     local height = love.graphics.getHeight()
@@ -116,7 +124,6 @@ function Game:drawGrid()
     local w = 0
     local h = 0
 
-    local gridSpace = 50
 
     love.graphics.setColor(180, 180, 200, 200)
 
@@ -155,3 +162,18 @@ function Game:keyPressed(key)
     end
 end
 
+function Game:mousePressed(x, y, button)
+    if button == "l" then
+        local pos = Vec2:New({ x = x - x % gridSpace, y = y - y % gridSpace })
+
+        -- Make sure there's not another tower at pos first
+        for _, o in pairs(self.objects) do
+            -- TODO is there a better way to do this? I think so
+            if o.pos.x == pos.x and o.pos.y == pos.y then
+                return
+            end
+        end
+
+        self.objects[#self.objects + 1] = Tower:New({ pos = pos })
+    end
+end
