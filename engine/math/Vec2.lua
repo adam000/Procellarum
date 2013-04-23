@@ -52,3 +52,7 @@ end
 function Vec2:normalize()
     return self / self:length()
 end
+
+function Vec2:angleTo(v)
+    return math.atan2(self.y - v.y, self.x - v.x)
+end

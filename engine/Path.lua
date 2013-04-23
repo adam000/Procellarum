@@ -35,7 +35,7 @@ function Path:update(dt)
     local numFinished = 0
     local numKilled = 0
 
-    for _, obj in pairs(self.units) do
+    for idx, obj in pairs(self.units) do
         local o = obj.unit
         local prev = obj.prev
         local dest = obj.destination.loc
@@ -46,7 +46,7 @@ function Path:update(dt)
                 o.pos = Vec2:New(dest)
 
                 -- If it's the end of the line, kill it
-                if (not obj.destination.next) then
+                if not obj.destination.next then
                     o:kill()
                     numFinished = numFinished + 1
                 else
@@ -61,6 +61,9 @@ function Path:update(dt)
 
                 o.pos = o.pos + movement
             end
+        else
+            numKilled = numKilled + 1
+            table.remove(self.units, idx)
         end
     end
 
