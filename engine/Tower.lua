@@ -1,16 +1,19 @@
 -- A tower represents a stationary object
 
 Tower = {
+    bulletHook = nil,
+    masterBulletList = nil, -- TODO hack fix this
+    bulletList = {},
     target = nil,
     targetDistance = nil,
     acquireTarget = nil,
     imageRoot = "assets/Tower1/",
     image = love.graphics.newImage("assets/Tower1/North.png"),
     rot = 0,
-    fireRate = 3,
-    firingRadius = 75,
-    spinup = 0,
     pos = Vec2:New(),
+    fireRate = 3, -- TODO abstract this out to a "weapon" on a tower
+    firingRadius = 125,
+    spinup = 0,
 }
 
 function Tower:New(o)
@@ -29,7 +32,13 @@ function Tower:update(dt)
         -- Fire!
         print("Pew!")
         self.spinup = 0
-        self.target:kill()
+
+        -- Create the bullet
+        bullet = Projectile:New({ target = self.target, pos = self.pos })
+        self.bulletList[#self.bulletList + 1] = bullet
+        self.masterBulletList[#self.masterBulletList + 1] = bullet
+
+        -- Cleanup
         self.target = nil
         self.targetDistance = nil
     else
@@ -39,6 +48,39 @@ function Tower:update(dt)
         else
             -- TODO why subtract 90 degrees??
             self.rot = self.pos:angleTo(self.target.pos) - math.pi / 2
+        end
+    end
+
+    -- b is for bullet
+    for i, b in pairs(self.bulletList) do
+        if not b.target:isAlive() then
+            table.remove(self.bulletList, i)
+
+            for k, v in pairs(self.masterBulletList) do
+                if v == b then
+                    table.remove(self.masterBulletList, k)
+                    break
+                end
+            end
+        end
+
+        targetVec = b.target.pos - b.pos
+        if targetVec:length() < dt * b.speed then
+            -- Kaboom! collision
+            print("Kaboom!")
+            b:doDamage(b.target)
+
+            table.remove(self.bulletList, i)
+
+            for k, v in pairs(self.masterBulletList) do
+                if v == b then
+                    table.remove(self.masterBulletList, k)
+                    break
+                end
+            end
+            return
+        else
+            b.pos = b.pos + targetVec:normalize() * dt * b.speed
         end
     end
 end

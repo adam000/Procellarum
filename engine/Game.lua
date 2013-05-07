@@ -4,6 +4,7 @@ require 'Path'
 require 'Wave'
 require 'Unit'
 require 'Tower'
+require 'Projectile'
 
 Game = {
     path = nil,
@@ -212,7 +213,8 @@ function Game:mousePressed(x, y, button)
         end
 
         local offset = Vec2:New({ x = 25, y = 25 })
-        local tower = Tower:New({ pos = pos + offset })
+
+        local tower = Tower:New({ pos = pos + offset, masterBulletList = self.objects.projectiles })
         tower.acquireTarget = self:targetProgressing(tower)
         self.objects.towers[#self.objects.towers + 1] = tower
     end

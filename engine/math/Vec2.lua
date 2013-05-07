@@ -13,6 +13,7 @@ Vec2.__add = function(op1, op2)
     return Vec2:New({ x = op1.x + op2.x, y = op1.y + op2.y })
 end
 
+-- Note: this returns the vector from op2 to op1
 Vec2.__sub = function(op1, op2)
     return Vec2:New({ x = op1.x - op2.x, y = op1.y - op2.y })
 end
