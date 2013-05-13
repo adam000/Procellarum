@@ -14,14 +14,10 @@ Game = {
     paused = false,
     dtMod = 1,
     drawBackgrounds = false,
+    showGameOver = false,
+    gameOverTime = 0,
 }
 
--- TODO refactor into object
-local showGameOver = false
-local gameOverTime = 0
-
--- TODO refactor into object
-local currentBoxArea = nil
 
 function Game:New(o)
     o = o or {}
@@ -64,12 +60,12 @@ function Game:update(dt)
     dt = dt * self.dtMod
 
     if self.numLives <= 0 then
-        gameOverTime = gameOverTime + dt
+        this.gameOverTime = this.gameOverTime + dt
 
         -- toggle GAME OVER
-        if gameOverTime > 1.0 then
-            showGameOver = not showGameOver
-            gameOverTime = gameOverTime - 1
+        if this.gameOverTime > 1.0 then
+            this.showGameOver = not this.showGameOver
+            this.gameOverTime = this.gameOverTime - 1
         end
 
         return
@@ -79,7 +75,7 @@ function Game:update(dt)
     self.numLives = self.numLives - finished
 
     if self.numLives <= 0 then
-        showGameOver = true
+        this.showGameOver = true
     end
 
     self.wave:update(dt)
@@ -119,7 +115,7 @@ function Game:draw()
         end
     end
 
-    if showGameOver then
+    if this.showGameOver then
         local width = love.graphics.getWidth()
         local height = love.graphics.getHeight()
         local font = love.graphics.newFont(48)
