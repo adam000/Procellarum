@@ -11,8 +11,8 @@ Tower = {
     image = love.graphics.newImage("assets/Tower1/North.png"),
     rot = 0,
     pos = Vec2:New(),
-    fireRate = 3, -- TODO abstract this out to a "weapon" on a tower
-    firingRadius = 125,
+    fireRate = 1.2, -- TODO abstract this out to a "weapon" on a tower
+    firingRadius = 200,
     spinup = 0,
 }
 

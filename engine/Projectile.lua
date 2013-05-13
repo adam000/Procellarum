@@ -3,7 +3,7 @@ Projectile = {
     image = love.graphics.newImage("assets/Bullet1.png"),
     pos = Vec2:New(),
     speed = 100,
-    damage = 500,
+    damage = 200,
     target = nil,
 }
 

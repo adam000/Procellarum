@@ -32,11 +32,17 @@ function Game:New(o)
     o.path = o.path or Path:New({ waypoints = {
         loc = Vec2:New({ x = 100, y = 100 }),
         next = {
-            loc = Vec2:New({ x = 400, y = 100 }),
+            loc = Vec2:New({ x = 700, y = 100 }),
             next = {
-                loc = Vec2:New({ x = 400, y = 400}),
+                loc = Vec2:New({ x = 700, y = 300}),
                 next = {
-                    loc = Vec2:New({ x = 300, y = 500 }),
+                    loc = Vec2:New({ x = 100, y = 300 }),
+                    next = {
+                        loc = Vec2:New({ x = 100, y = 500 }),
+                        next = {
+                            loc = Vec2:New({ x = 700, y = 500 }),
+                        }
+                    }
                 }
             }
         }

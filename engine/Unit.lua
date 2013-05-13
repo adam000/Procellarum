@@ -7,7 +7,7 @@ local static = {
 Unit = {
     alive = true,
     image = love.graphics.newImage("assets/Ghost1.png"),
-    velocity = 75,
+    velocity = 85,
     rot = 0,
     pos = Vec2:New({ x = 0, y = 0 }),
     health = 1000,
