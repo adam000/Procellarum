@@ -23,7 +23,7 @@ Vec2.__mul = function(op1, scalar)
 end
 
 Vec2.__div = function(op1, scalar)
-    if (scalar == 0) then
+    if scalar == 0 then
         print("ERROR! Division of Vec2 by zero")
         print(debug.traceback())
         love.event.quit()

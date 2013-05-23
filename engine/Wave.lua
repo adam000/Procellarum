@@ -5,6 +5,7 @@ Wave = {
     timer = 1.0,
     unit = Unit,
     numUnits = 10,
+    units = {},
     hook = nil,
 }
 
@@ -25,10 +26,28 @@ end
 
 function Wave:update(dt)
     self.timer = self.timer + dt
-    if (self:shouldSpawn()) then
-        self.hook(self.unit:New())
+
+    if self:shouldSpawn() then
+        local newUnit = self.unit:New()
+
+        self.hook(newUnit)
+        self.units[#self.units + 1] = newUnit
+
         self.timer = self.timer - self.spawnGap
         self.numUnits = self.numUnits - 1
     end
+
+    for idx, obj in pairs(self.units) do
+        if not obj:isAlive() then
+            table.remove(self.units, idx)
+        end
+    end
+
+    if self.numUnits == 0 and #self.units == 0 then
+        -- wave has ended
+        return false
+    end
+
+    return true
 end
 

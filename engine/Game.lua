@@ -1,7 +1,7 @@
 -- A game contains Waves, a Path, and Tower information
 
 require 'Path'
-require 'Wave'
+require 'Waves'
 require 'Unit'
 require 'Tower'
 require 'Projectile'
@@ -9,13 +9,13 @@ require 'Projectile'
 Game = {
     path = nil,
     objects = { units = {}, towers = {}, projectiles = {}},
-    waveNum = 0,
     numLives = 5, -- HARDCODE
     paused = false,
     dtMod = 1,
     drawBackgrounds = false,
     showGameOver = false,
     gameOverTime = 0,
+    waves = nil,
 }
 
 
@@ -49,8 +49,14 @@ function Game:New(o)
         o.path:addUnits(obj)
     end
 
-    o.wave = o.wave or Wave:New()
-    o.wave:addObjHook(waveHook)
+    o.waves = Waves:New()
+
+    for i = 1,3 do
+        local wave = Wave:New({ numUnits = 3 * i })
+        wave:addObjHook(waveHook)
+
+        o.waves:addWave(wave)
+    end
 
     return o
 end
@@ -78,7 +84,7 @@ function Game:update(dt)
         self.showGameOver = true
     end
 
-    self.wave:update(dt)
+    self.waves:update(dt)
 
     for _, t in pairs(self.objects) do
         for _, o in pairs(t) do
@@ -91,7 +97,7 @@ function Game:draw()
     self:drawGrid()
 
     -- Draw interface
-    love.graphics.print("Wave " .. self.waveNum, 10, 10)
+    love.graphics.print("Wave " .. self.waves.current, 10, 10)
     love.graphics.print("Lives: " .. self.numLives, 310, 10)
 
     -- Draw object backgrounds
