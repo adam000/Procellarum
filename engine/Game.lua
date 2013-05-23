@@ -44,13 +44,13 @@ function Game:New(o)
         }
     }})
 
+    local waveHook = function(obj)
+        o.objects.units[#o.objects.units + 1] = obj
+        o.path:addUnits(obj)
+    end
+
     o.wave = o.wave or Wave:New()
-    o.wave:addObjHook(
-        function(obj)
-            o.objects.units[#o.objects.units + 1] = obj
-            o.path:addUnits(obj)
-        end
-    )
+    o.wave:addObjHook(waveHook)
 
     return o
 end
