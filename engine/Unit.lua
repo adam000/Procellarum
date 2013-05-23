@@ -11,6 +11,7 @@ Unit = {
     rot = 0,
     pos = Vec2:New({ x = 0, y = 0 }),
     health = 1000,
+    reward = 50,
 }
 
 function Unit:New(o)

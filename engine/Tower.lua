@@ -14,6 +14,7 @@ Tower = {
     fireRate = 1.2, -- TODO abstract this out to a "weapon" on a tower
     firingRadius = 200,
     spinup = 0,
+    cost = 250,
 }
 
 function Tower:New(o)

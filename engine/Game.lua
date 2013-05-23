@@ -16,6 +16,7 @@ Game = {
     showGameOver = false,
     gameOverTime = 0,
     waves = nil,
+    money = 1000,
 }
 
 
@@ -77,8 +78,9 @@ function Game:update(dt)
         return
     end
 
-    _, finished = self.path:update(dt)
+    bounty, finished = self.path:update(dt)
     self.numLives = self.numLives - finished
+    self.money = self.money + bounty
 
     if self.numLives <= 0 then
         self.showGameOver = true
@@ -99,6 +101,7 @@ function Game:draw()
     -- Draw interface
     love.graphics.print("Wave " .. self.waves.current, 10, 10)
     love.graphics.print("Lives: " .. self.numLives, 310, 10)
+    love.graphics.print("Money: " .. self.money, 690, 10)
 
     -- Draw object backgrounds
     if self.drawBackgrounds then
@@ -210,6 +213,10 @@ end
 
 function Game:mousePressed(x, y, button)
     if button == "l" then
+        if self.money < Tower.cost then
+            return
+        end
+
         local pos = Vec2:New({ x = x - x % gridSpace, y = y - y % gridSpace })
 
         -- Make sure there's not another tower at pos first
@@ -219,6 +226,8 @@ function Game:mousePressed(x, y, button)
                 return
             end
         end
+
+        self.money = self.money - Tower.cost
 
         local offset = Vec2:New({ x = 25, y = 25 })
 

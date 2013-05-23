@@ -33,7 +33,7 @@ end
 
 function Path:update(dt)
     local numFinished = 0
-    local numKilled = 0
+    local killBounty = 0
 
     for idx, obj in pairs(self.units) do
         local o = obj.unit
@@ -62,12 +62,12 @@ function Path:update(dt)
                 o.pos = o.pos + movement
             end
         else
-            numKilled = numKilled + 1
+            killBounty = killBounty + o.reward
             table.remove(self.units, idx)
         end
     end
 
-    return numKilled, numFinished
+    return killBounty, numFinished
 end
 
 function Path:draw()
