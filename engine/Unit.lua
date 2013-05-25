@@ -12,7 +12,7 @@ Unit = {
     pos = nil,
     health = 1000,
     reward = 50,
-    effects = {},
+    effects = nil,
     finished = false,
 }
 
@@ -20,6 +20,8 @@ function Unit:New(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+    o.effects = {}
 
     o.id = static.id
     static.id = static.id + 1
