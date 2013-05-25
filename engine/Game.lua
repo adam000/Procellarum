@@ -5,6 +5,7 @@ require 'Waves'
 require 'Unit'
 require 'Tower'
 require 'SlowingTower'
+require 'BuffingTower'
 require 'Projectile'
 
 Game = {
@@ -54,7 +55,7 @@ function Game:New(o)
 
     o.waves = Waves:New()
 
-    for i = 1,3 do
+    for i = 1,5 do
         local wave = Wave:New({ numUnits = 3 * i })
         wave:addObjHook(waveHook)
 
@@ -183,6 +184,9 @@ function Game:togglePause()
     self.paused = not self.paused
 end
 
+-- TODO hax to the max
+local makeThirdTower = false
+
 function Game:keyPressed(key)
     if key == " " or key == "p" then
         self:togglePause()
@@ -194,8 +198,16 @@ function Game:keyPressed(key)
         love.event.quit()
     elseif key == "t" then
         self.drawBackgrounds = not self.drawBackgrounds
+    elseif key == "b" then
+        makeThirdTower = true
     else
         print("Player pressed unmapped key: " .. key)
+    end
+end
+
+function Game:keyReleased(key)
+    if key == "b" then
+        makeThirdTower = false
     end
 end
 
@@ -235,6 +247,15 @@ function Game:createTowerAt(pos, TowerClass)
 
     local firstPoint = self.path:getFirstWaypoint()
 
+    -- Check to see if we can be buffed
+    if tower.Class ~= BuffingTower then
+        for _, o in pairs(self.objects.towers) do
+            if o.Class == BuffingTower and o:shouldBuff(tower) then
+                tower.buffs[#o.buffs + 1] = o
+            end
+        end
+    end
+
     self.objects.towers[#self.objects.towers + 1] = tower
 
     return tower
@@ -245,10 +266,17 @@ function Game:mousePressed(x, y, button)
     local tower = nil
 
     if button == "l" then
-        tower = self:createTowerAt(pos, Tower)
+        if makeThirdTower then
+            tower = self:createTowerAt(pos, BuffingTower)
+            for _, o in pairs(self.objects.towers) do
+                if o ~= tower and tower:shouldBuff(o) then
+                    o.buffs[#o.buffs + 1] = tower
+                end
+            end
+        else
+            tower = self:createTowerAt(pos, Tower)
+        end
     elseif button == "r" then
         tower = self:createTowerAt(pos, SlowingTower)
-    elseif button == "m" then
-        return
     end
 end

@@ -6,7 +6,7 @@ Tower = {
     bulletType = Projectile,
     bulletHook = nil,
     masterBulletList = nil, -- TODO hack fix this
-    bulletList = {},
+    bulletList = nil,
     target = nil,
     targetDistance = nil,
     acquireTarget = nil,
@@ -18,16 +18,31 @@ Tower = {
     firingRadius = 200,
     spinup = 0,
     cost = 250,
+    buffs = nil,
 }
+
+Tower.Class = Tower
 
 function Tower:New(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+    o.bulletList = {}
+    o.buffs = {}
+
     return o
 end
 
 function Tower:update(dt)
+    for _, o in pairs(self.buffs) do
+        dt = o:buff(self, dt)
+    end
+
+    if self.fireRate == 0 then
+        return
+    end
+
     self.spinup = self.spinup + dt
 
     self:acquireTarget()

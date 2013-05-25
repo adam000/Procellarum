@@ -6,6 +6,8 @@ require 'SlowingProjectile'
 -- Prototypical inheritance
 SlowingTower = Tower:New()
 
+SlowingTower.Class = SlowingTower
+
 SlowingTower.cost = 350
 SlowingTower.image = love.graphics.newImage("assets/Tower2/North.png")
 SlowingTower.fireRate = 1.8
