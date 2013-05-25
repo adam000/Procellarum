@@ -12,6 +12,8 @@ Unit = {
     pos = Vec2:New({ x = 0, y = 0 }),
     health = 1000,
     reward = 50,
+    effects = {},
+    updatePosHook = nil,
 }
 
 function Unit:New(o)
@@ -47,9 +49,32 @@ function Unit:takeDamage(ptsDmg)
 end
 
 function Unit:update(dt)
+    for idx, e in pairs(self.effects) do
+        e:update(dt)
+    end
+
+    dt = self:applyEffects(dt)
+
     if self:isAlive() then
         self:animate(dt)
     end
+end
+
+function Unit:applyEffects(dt)
+    for idx, e in pairs(self.effects) do
+        if (e:expired()) then
+            table.remove(self.effects, idx)
+        else
+            -- TODO make effects stack
+            return e:effect(dt)
+        end
+    end
+
+    return dt
+end
+
+function Unit:addEffect(e)
+    self.effects[#self.effects + 1] = e
 end
 
 function Unit:draw()

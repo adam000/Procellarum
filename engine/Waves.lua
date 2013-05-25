@@ -34,5 +34,3 @@ function Waves:update(dt)
         self.current = self.current + 1
     end
 end
-
-

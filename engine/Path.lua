@@ -41,6 +41,12 @@ function Path:update(dt)
         local dest = obj.destination.loc
 
         if o:isAlive() then
+            -- TODO start here. This needs some serious refactoring
+            -- For time dilation effect
+            if o.applyEffects ~= nil then
+                dt = o:applyEffects(dt)
+            end
+
             if o.velocity * dt >= (o.pos - dest):length() then
                 -- Object reaches its destination.
                 o.pos = Vec2:New(dest)

@@ -4,6 +4,7 @@ require 'Path'
 require 'Waves'
 require 'Unit'
 require 'Tower'
+require 'SlowingTower'
 require 'Projectile'
 
 Game = {
@@ -232,6 +233,30 @@ function Game:mousePressed(x, y, button)
         local offset = Vec2:New({ x = 25, y = 25 })
 
         local tower = Tower:New({ pos = pos + offset, masterBulletList = self.objects.projectiles })
+        tower.acquireTarget = self:targetProgressing(tower)
+        self.objects.towers[#self.objects.towers + 1] = tower
+    elseif button == "r" then
+        if self.money < SlowingTower.cost then
+            return
+        end
+
+        local pos = Vec2:New({ x = x - x % gridSpace, y = y - y % gridSpace })
+
+        -- Make sure there's not another tower at pos first
+        for _, o in pairs(self.objects.towers) do
+            -- TODO is there a better way to do this? I think so
+            if o.pos.x == pos.x + 25 and o.pos.y == pos.y + 25 then
+                return
+            end
+        end
+
+        self.money = self.money - SlowingTower.cost
+
+        print("Made a new slowingTower")
+
+        local offset = Vec2:New({ x = 25, y = 25 })
+
+        local tower = SlowingTower:New({ pos = pos + offset, masterBulletList = self.objects.projectiles })
         tower.acquireTarget = self:targetProgressing(tower)
         self.objects.towers[#self.objects.towers + 1] = tower
     end
