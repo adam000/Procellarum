@@ -13,7 +13,7 @@ Tower = {
     imageRoot = "assets/Tower1/",
     image = love.graphics.newImage("assets/Tower1/North.png"),
     rot = 0,
-    pos = Vec2:New(),
+    pos = nil,
     fireRate = 1.2, -- TODO abstract this out to a "weapon" on a tower
     firingRadius = 200,
     spinup = 0,
@@ -41,7 +41,7 @@ function Tower:update(dt)
             self.rot = 0
         else
             -- TODO why subtract 90 degrees??
-            self.rot = self.pos:angleTo(self.target.pos) - math.pi / 2
+            self.rot = self.pos:angleTo(self.target.pos.pos) - math.pi / 2
         end
     end
 
@@ -76,7 +76,7 @@ function Tower:updateBullets(dt)
             end
         end
 
-        targetVec = b.target.pos - b.pos
+        targetVec = b.target.pos.pos - b.pos
         if targetVec:length() < dt * b.speed then
             -- Kaboom! collision
             print("Kaboom!")

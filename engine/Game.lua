@@ -28,17 +28,17 @@ function Game:New(o)
 
     -- HARDCODE
     o.path = o.path or Path:New({ waypoints = {
-        loc = Vec2:New({ x = 100, y = 100 }),
+        pos = Vec2:New({ x = 100, y = 100 }),
         next = {
-            loc = Vec2:New({ x = 700, y = 100 }),
+            pos = Vec2:New({ x = 700, y = 100 }),
             next = {
-                loc = Vec2:New({ x = 700, y = 300}),
+                pos = Vec2:New({ x = 700, y = 300}),
                 next = {
-                    loc = Vec2:New({ x = 100, y = 300 }),
+                    pos = Vec2:New({ x = 100, y = 300 }),
                     next = {
-                        loc = Vec2:New({ x = 100, y = 500 }),
+                        pos = Vec2:New({ x = 100, y = 500 }),
                         next = {
-                            loc = Vec2:New({ x = 700, y = 500 }),
+                            pos = Vec2:New({ x = 700, y = 500 }),
                         }
                     }
                 }
@@ -46,6 +46,7 @@ function Game:New(o)
         }
     }})
 
+    -- TODO superhax fix it
     local waveHook = function(obj)
         o.objects.units[#o.objects.units + 1] = obj
         o.path:addUnits(obj)
@@ -90,7 +91,11 @@ function Game:update(dt)
     self.waves:update(dt)
 
     for _, t in pairs(self.objects) do
-        for _, o in pairs(t) do
+        for i, o in pairs(t) do
+            if o.isAlive and not o:isAlive() then
+                table.remove(t, i)
+            end
+
             o:update(dt)
         end
     end
@@ -144,7 +149,7 @@ function Game:draw()
     end
 end
 
--- TODO refactor into object
+-- TODO refactor into a view object
 local gridSpace = 50
 
 function Game:drawGrid()
@@ -168,24 +173,6 @@ function Game:drawGrid()
     end
 
     love.graphics.setColor(255, 255, 255)
-end
-
-function Game:targetProgressing(tower)
-    return function()
-        tower.target = nil
-        tower.targetDistance = nil
-
-        for _, o in pairs(self.objects.units) do
-            if o:isAlive() then
-                local dist = tower.pos:distanceTo(o.pos)
-                if dist < tower.firingRadius then
-                    tower.target = o
-                    tower.targetDistance = dist
-                    break
-                end
-            end
-        end
-    end
 end
 
 function Game:isPaused()
@@ -212,52 +199,56 @@ function Game:keyPressed(key)
     end
 end
 
+function Game:createTowerAt(pos, TowerClass)
+    if self.money < TowerClass.cost then
+        return nil
+    end
+
+    local offset = Vec2:New({ x = gridSpace / 2, y = gridSpace / 2 })
+
+    -- Make sure there's not another tower at pos first
+    for _, o in pairs(self.objects.towers) do
+        -- TODO is there a better way to do this? I think so
+        if o.pos.x == pos.x + offset.x and o.pos.y == pos.y + offset.y then
+            return nil
+        end
+    end
+
+    -- Buy the tower
+    self.money = self.money - TowerClass.cost
+
+    local tower = TowerClass:New({ pos = pos + offset, masterBulletList = self.objects.projectiles })
+
+    tower.acquireTarget = function()
+        tower.target = nil
+        tower.targetDistance = nil
+
+        for _, o in pairs(self.objects.units) do
+            local dist = tower.pos:distanceTo(o.pos.pos)
+            if dist < tower.firingRadius then
+                tower.target = o
+                tower.targetDistance = dist
+                break
+            end
+        end
+    end
+
+    local firstPoint = self.path:getFirstWaypoint()
+
+    self.objects.towers[#self.objects.towers + 1] = tower
+
+    return tower
+end
+
 function Game:mousePressed(x, y, button)
+    local pos = Vec2:New({ x = x - x % gridSpace, y = y - y % gridSpace })
+    local tower = nil
+
     if button == "l" then
-        if self.money < Tower.cost then
-            return
-        end
-
-        local pos = Vec2:New({ x = x - x % gridSpace, y = y - y % gridSpace })
-
-        -- Make sure there's not another tower at pos first
-        for _, o in pairs(self.objects.towers) do
-            -- TODO is there a better way to do this? I think so
-            if o.pos.x == pos.x + 25 and o.pos.y == pos.y + 25 then
-                return
-            end
-        end
-
-        self.money = self.money - Tower.cost
-
-        local offset = Vec2:New({ x = 25, y = 25 })
-
-        local tower = Tower:New({ pos = pos + offset, masterBulletList = self.objects.projectiles })
-        tower.acquireTarget = self:targetProgressing(tower)
-        self.objects.towers[#self.objects.towers + 1] = tower
+        tower = self:createTowerAt(pos, Tower)
     elseif button == "r" then
-        if self.money < SlowingTower.cost then
-            return
-        end
-
-        local pos = Vec2:New({ x = x - x % gridSpace, y = y - y % gridSpace })
-
-        -- Make sure there's not another tower at pos first
-        for _, o in pairs(self.objects.towers) do
-            -- TODO is there a better way to do this? I think so
-            if o.pos.x == pos.x + 25 and o.pos.y == pos.y + 25 then
-                return
-            end
-        end
-
-        self.money = self.money - SlowingTower.cost
-
-        print("Made a new slowingTower")
-
-        local offset = Vec2:New({ x = 25, y = 25 })
-
-        local tower = SlowingTower:New({ pos = pos + offset, masterBulletList = self.objects.projectiles })
-        tower.acquireTarget = self:targetProgressing(tower)
-        self.objects.towers[#self.objects.towers + 1] = tower
+        tower = self:createTowerAt(pos, SlowingTower)
+    elseif button == "m" then
+        return
     end
 end

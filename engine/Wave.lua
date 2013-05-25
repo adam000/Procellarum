@@ -37,9 +37,10 @@ function Wave:update(dt)
         self.numUnits = self.numUnits - 1
     end
 
-    for idx, obj in pairs(self.units) do
-        if not obj:isAlive() then
-            table.remove(self.units, idx)
+    -- Check for, and eliminate, dead units
+    for i, o in pairs(self.units) do
+        if not o:isAlive() then
+            table.remove(self.units, i)
         end
     end
 
