@@ -268,6 +268,9 @@ function Game:mousePressed(x, y, button)
     if button == "l" then
         if makeThirdTower then
             tower = self:createTowerAt(pos, BuffingTower)
+            if not tower then
+                return
+            end
             for _, o in pairs(self.objects.towers) do
                 if o ~= tower and tower:shouldBuff(o) then
                     o.buffs[#o.buffs + 1] = tower
